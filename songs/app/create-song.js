@@ -1,7 +1,8 @@
-const db = require("../../db");
-const {  PutItemCommand } = require("@aws-sdk/client-dynamodb");
-const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
+import { PutItemCommand } from "@aws-sdk/client-dynamodb"
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
+const client = new DynamoDBClient({});
 export const handler = async (event) => {
     const response = { statusCode: 200 };
 
@@ -11,7 +12,7 @@ export const handler = async (event) => {
             TableName: process.env.DYNAMODB_TABLE_NAME,
             Item: marshall(body || {}),
         };
-        const createResult = await db.send(new PutItemCommand(params));
+        const createResult = await client.send(new PutItemCommand(params));
 
         response.body = JSON.stringify({
             message: "Successfully created song.",

@@ -1,7 +1,8 @@
-const db = require("../../db");
-const { UpdateItemCommand} = require("@aws-sdk/client-dynamodb");
-const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
+import {  UpdateItemCommand } from "@aws-sdk/client-dynamodb"
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
+const client = new DynamoDBClient({});
 export const handler =  async (event) => {
     const response = { statusCode: 200 };
 
@@ -21,7 +22,7 @@ export const handler =  async (event) => {
                 [`:value${index}`]: body[key],
             }), {})),
         };
-        const updateResult = await db.send(new UpdateItemCommand(params));
+        const updateResult = await client.send(new UpdateItemCommand(params));
 
         response.body = JSON.stringify({
             message: "Successfully updated song.",

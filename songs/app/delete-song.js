@@ -1,7 +1,8 @@
-const db = require("../../db");
-const { DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
-const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb");
+import { DeleteItemCommand } from "@aws-sdk/client-dynamodb"
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
+const client = new DynamoDBClient({});
 export const handler = async (event) => {
     const response = { statusCode: 200 };
 
@@ -10,7 +11,7 @@ export const handler = async (event) => {
             TableName: process.env.DYNAMODB_TABLE_NAME,
             Key: marshall({ songId: event.pathParameters.songId }),
         };
-        const deleteResult = await db.send(new DeleteItemCommand(params));
+        const deleteResult = await client.send(new DeleteItemCommand(params));
 
         response.body = JSON.stringify({
             message: "Successfully deleted song.",
