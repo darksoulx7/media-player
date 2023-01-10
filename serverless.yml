@@ -1,0 +1,103 @@
+service: media-player
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: us-west-1
+  environment:
+    DYNAMODB_TABLE_NAME: ${self:custom.songsTableName}
+
+custom:
+  songsTableName: songs-table-${self:provider.stage}
+
+plugins:
+  - serverless-iam-roles-per-function
+
+functions:
+  getSong:
+    handler: api.getSong
+    name: get-song
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: song/{songId}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource: !GetAtt SongsTable.Arn
+  createSong:
+    handler: api.createSong
+    name: create-song
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: song
+          method: POST
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource: !GetAtt SongsTable.Arn
+  updateSong:
+    handler: api.updateSong
+    name: update-song
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: song/{songId}
+          method: PUT
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+        Resource: !GetAtt SongsTable.Arn
+  deleteSong:
+    handler: api.deleteSong
+    name: delete-song
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: song/{songId}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DeleteItem"
+        Resource: !GetAtt SongsTable.Arn
+  getAllSongs:
+    handler: api.getAllSongs
+    name: get-all-songs
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: songs
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:Scan"
+        Resource: !GetAtt SongsTable.Arn
+
+resources:
+  Resources:
+    SongsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.songsTableName}
+        AttributeDefinitions:
+          - AttributeName: songId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: songId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
