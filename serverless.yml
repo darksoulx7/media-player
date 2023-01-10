@@ -16,7 +16,7 @@ plugins:
 
 functions:
   getSong:
-    handler: api.getSong
+    handler: songs/app/get-song.handler
     name: get-song
     memorySize: 128 # mb
     timeout: 5 # seconds
@@ -30,7 +30,7 @@ functions:
           - "dynamodb:GetItem"
         Resource: !GetAtt SongsTable.Arn
   createSong:
-    handler: api.createSong
+    handler: songs/app/create-song.handler
     name: create-song
     memorySize: 128 # mb
     timeout: 5 # seconds
@@ -45,7 +45,7 @@ functions:
         Resource: !GetAtt SongsTable.Arn
   updateSong:
     handler: api.updateSong
-    name: update-song
+    name: songs/app/update-song.handler
     memorySize: 128 # mb
     timeout: 5 # seconds
     events:
@@ -58,7 +58,7 @@ functions:
           - "dynamodb:UpdateItem"
         Resource: !GetAtt SongsTable.Arn
   deleteSong:
-    handler: api.deleteSong
+    handler: songs/app/delete-song.handler
     name: delete-song
     memorySize: 128 # mb
     timeout: 5 # seconds
@@ -72,7 +72,7 @@ functions:
           - "dynamodb:DeleteItem"
         Resource: !GetAtt SongsTable.Arn
   getAllSongs:
-    handler: api.getAllSongs
+    handler: songs/app/get-all-songs.handler
     name: get-all-songs
     memorySize: 128 # mb
     timeout: 5 # seconds
