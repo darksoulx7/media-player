@@ -44,8 +44,8 @@ functions:
           - "dynamodb:PutItem"
         Resource: !GetAtt SongsTable.Arn
   updateSong:
-    handler: api.updateSong
-    name: songs/app/update-song.handler
+    handler: songs/app/update-song.handler
+    name: update-song
     memorySize: 128 # mb
     timeout: 5 # seconds
     events:
